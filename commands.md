@@ -6,7 +6,7 @@
 ```python
 pip install pipenv
 
-pipenv install pandas scikit-learn python-dotenv tqdm gradio flask
+pipenv install pandas scikit-learn tqdm flask
 
 pipenv install --dev notebook ipywidgets
 ```
