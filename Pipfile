@@ -8,8 +8,14 @@ pandas = "*"
 scikit-learn = "*"
 tqdm = "*"
 flask = "*"
+xgboost = "*"
+ipykernel = "*"
 
 [dev-packages]
+notebook = "*"
+ipywidgets = "*"
+matplotlib = "*"
+seaborn = "*"
 
 [requires]
 python_version = "3.12"

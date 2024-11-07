@@ -6,11 +6,19 @@
 ```python
 pip install pipenv
 
-pipenv install pandas scikit-learn tqdm flask
+pipenv install ipykernel pandas scikit-learn xgboost tqdm flask
 
-pipenv install --dev notebook ipywidgets
+pipenv install --dev notebook ipywidgets matplotlib seaborn
+
+pipenv run python -m ipykernel install --user --name=student-dropout-and-success-prediction --display-name "Python (student-dropout-and-success-prediction)"
 ```
+
+
+pipenv run pip show xgboost
+
+
 
 ```
 pipenv run jupyter-lab
 ```
+
