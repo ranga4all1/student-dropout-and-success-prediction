@@ -7,10 +7,7 @@
 print(f"Importing required libraries...")
 import pickle
 import pandas as pd
-# from sklearn.preprocessing import StandardScaler
-# from flask import Flask
-# from flask import jsonify
-# from flask import request
+
 
 # Load model
 print(f"Loading model...")
