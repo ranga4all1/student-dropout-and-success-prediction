@@ -137,7 +137,7 @@ Result: Same as previous step
 1. Build and run docker image (for system dependency management)
 
 ```
-docker build -t student-dropout-success .
+docker build -t <your_dockerhub_username>/student-dropout-success .
 docker images
 ```
 2. Run the container with proper signal handling
@@ -163,3 +163,51 @@ Result: Same as previous step
 
 
 ## Cloud Deployment
+
+
+#### Docker HUB: Create an image repository
+
+1. Go to [Docker Hub](https://hub.docker.com) and sign in by creating account.
+2. Select Create repository.
+3. On the Create repository page, enter the following information:
+- Repository name - `student-dropout-success`
+- Short description - Flask based REST API service for student-dropout-success-prediction
+- Visibility - select `Public` to allow others to pull your app
+4. Select Create to create the repository.
+5. Go to your docker hub account settings -> Personal access tokens and create access token:
+- description: my-access-token
+- permissions: Read & Write
+
+#### Push docker image to docker hub
+
+```
+docker login -u <your_dockerhub_username> -p <your_access_token>
+docker push <your_dockerhub_username>/student-dropout-success:latest
+```
+
+#### Deploy to `Render` cloud service
+
+1. In the [Render Dashboard](https://dashboard.render.com/), sign in (create account if needed) and click `+ New` -> `Web service`
+- Source Code: Existing Image
+- Image URL: `<your_dockerhub_username>/student-dropout-success`
+- Name: `student-dropout-and-success-prediction`
+- Region: <your-nearest-region>
+- Instance type: Free
+2. Click -> Deploy web service. Wait till service starts successfully.
+3. Note down your web service URL
+
+#### Test cloud based service
+
+1. Update `predict-render-test.py` with you URL in this format: `url = "https://<your-render-url>/predict"`
+2. Test
+```
+python predict-render-test.py
+```
+Result:
+```
+@ranga4all1 ➜ /workspaces/student-dropout-and-success-prediction (main) $ python predict-render-test.py
+input: {'curricular_units_2nd_sem_(approved)': [8], 'curricular_units_2nd_sem_(grade)': [14.07125], 'curricular_units_1st_sem_(approved)': [8], 'curricular_units_1st_sem_(grade)': [14.07125], 'tuition_fees_up_to_date': [1], 'scholarship_holder': [1], 'age_at_enrollment': [19], 'debtor': [0], 'gender': [0], 'application_mode': [1], 'curricular_units_2nd_sem_(enrolled)': [8], 'curricular_units_1st_sem_(enrolled)': [8], 'displaced': [1]}
+--------------------------------------------------
+{'predictions by model': [{'predicted_status': 'Graduate', 'probabilities': {'Dropout': 0.027190541365371718, 'Enrolled': 0.09465016268419602, 'Graduate': 0.8781592959504326}, 'student_id': 1}]}
+--------------------------------------------------
+```

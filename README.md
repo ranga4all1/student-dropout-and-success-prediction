@@ -247,6 +247,7 @@ After experimentation, application scripts were developed. We have below code fi
 - [**`predict.py`**](predict.py) - Flask API endpoint for model predictions
 - [**`predict-local-test.py`**](predict-local-test.py) - Test saved model locally with sample data
 - [**`predict-requests-test.py`**](predict-requests-test.py) - Test Flask API endpoint with sample requests
+- [**`predict-render-test.py`**](predict-render-test.py) - Test Render cloud's Flask API endpoint web service with sample requests
 - [**`Dockerfile`**](Dockerfile) - Docker configuration for containerizing the prediction service
 
 
@@ -341,9 +342,11 @@ Result: Same as previous step
 1. Build and run docker image (for system dependency management)
 
 ```
-docker build -t student-dropout-success .
+docker build -t <your_dockerhub_username>/student-dropout-success .
 docker images
 ```
+**Note**: We are adding `<your_dockerhub_username>` in the name to push image to docker HUB later. Refer to [Cloud deployment](#cloud-deployment) section for more details.
+
 2. Run the container with proper signal handling
 ```
 docker run -it --rm \
@@ -351,7 +354,7 @@ docker run -it --rm \
   -p 9696:9696 \
   --stop-signal SIGTERM \
   --stop-timeout 30 \
-  student-dropout-success
+  <your_dockerhub_username>/student-dropout-success
 ```
 You can stop the container gracefully by:
 
@@ -368,3 +371,65 @@ Result: Same as previous step
 
 ## Cloud deployment
 
+We will be deploying to Render cloud.
+
+#### Docker HUB: Create an image repository
+
+1. Go to [**`Docker Hub`**](https://hub.docker.com) and sign in by creating account.
+2. Select Create repository.
+3. On the Create repository page, enter the following information:
+- Repository name - `student-dropout-success`
+- Short description - Flask based REST API service for student-dropout-success-prediction
+- Visibility - select `Public` to allow others to pull your app
+4. Select Create to create the repository.
+5. Go to your docker hub account settings -> Personal access tokens and create access token:
+- description: my-access-token
+- permissions: Read & Write
+
+#### Push docker image to docker hub
+
+```
+docker login -u <your_dockerhub_username> -p <your_access_token>
+docker push <your_dockerhub_username>/student-dropout-success:latest
+```
+
+#### Deploy to `Render` cloud service
+
+1. In the [**`Render Dashboard`**](https://dashboard.render.com/), sign in (create account if needed) and click `+ New` -> `Web service`
+- Source Code: Existing Image
+- Image URL: `<your_dockerhub_username>/student-dropout-success`
+- Name: `student-dropout-and-success-prediction`
+- Region: <your-nearest-region>
+- Instance type: Free
+2. Click -> Deploy web service. Wait till service starts successfully.
+3. Note down your web service URL
+
+![Render desktop](images/render-web-service.png)
+
+#### Test cloud based service
+
+1. Update `predict-render-test.py` with you URL in this format: `url = "https://<your-render-url>/predict"`
+2. Test
+```
+python predict-render-test.py
+```
+Result:
+```
+@ranga4all1 ➜ /workspaces/student-dropout-and-success-prediction (main) $ python predict-render-test.py
+input: {'curricular_units_2nd_sem_(approved)': [8], 'curricular_units_2nd_sem_(grade)': [14.07125], 'curricular_units_1st_sem_(approved)': [8], 'curricular_units_1st_sem_(grade)': [14.07125], 'tuition_fees_up_to_date': [1], 'scholarship_holder': [1], 'age_at_enrollment': [19], 'debtor': [0], 'gender': [0], 'application_mode': [1], 'curricular_units_2nd_sem_(enrolled)': [8], 'curricular_units_1st_sem_(enrolled)': [8], 'displaced': [1]}
+--------------------------------------------------
+{'predictions by model': [{'predicted_status': 'Graduate', 'probabilities': {'Dropout': 0.027190541365371718, 'Enrolled': 0.09465016268419602, 'Graduate': 0.8781592959504326}, 'student_id': 1}]}
+--------------------------------------------------
+```
+
+![Results screenshot](images/result.png)
+
+#### Shut down web service
+
+Once tested, remove web service to avoid charges, if any.
+
+1. In the [**`Render Dashboard`**](https://dashboard.render.com/), Click -> Dashboard
+2. Click the `three-dot` button next to your web service that was deployed earlier
+3. Click `Settings`
+4. Click `Delete Web Service` at the **end** of the page
+5. Copy the delete command and validate to remove service
