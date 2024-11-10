@@ -123,6 +123,7 @@ You can find data in [**`data/dataset.csv`**](data/dataset.csv)
 - **`flask`** for REST API interface
 - **`Pipenv`** for virtual env (managing python dependencies)
 - **`Docker`** for containerization (managing system dependencies)
+- **`Render`** for cloud deployment
 
 
 ## Steps to run this application(reproduce)
