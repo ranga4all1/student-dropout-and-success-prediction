@@ -1,20 +1,21 @@
 # Table of Contents
 
 - [Student Dropout and Academic Success Prediction](#student-dropout-and-academic-success-prediction)
-  - [Problem Description](#problem-description)
-  - [Project Overview](#project-overview)
-  - [Dataset](#dataset)
-  - [Technologies](#technologies)
-  - [Steps to run this application(reproduce)](#steps-to-run-this-applicationreproduce)
-  - [Project structure](#project-structure)
-  - [Setup](#setup)
-  - [Experimentation](#experimentation)
-  - [Code](#code)
-  - [Train and test locally](#train-and-test-locally)
-  - [Running flask app and test](#running-flask-app-and-test)
-  - [Running flask app via gunicorn](#running-flask-app-via-gunicorn)
-  - [Containerization](#containerization)
-  - [Cloud deployment](#cloud-deployment)
+  - [System Overview](#system-overview)
+  - [Technical Architecture](#technical-architecture)
+  - [Data Specification](#data-specification)
+  - [Technical Stack](#technical-stack)
+  - [Implementation Guide (Reproduce)](#implementation-guide-reproduce)
+  - [Repository Structure](#repository-structure)
+  - [Development Environment Configuration](#development-environment-configuration)
+  - [Model Development and Analysis](#model-development-and-analysis)
+  - [Source Code](#source-code)
+  - [Model Training and Local Testing](#model-training-and-local-testing)
+  - [API Service Implementation](#api-service-implementation)
+  - [Production Deployment with Gunicorn](#production-deployment-with-gunicorn)
+  - [Docker Implementation (Containerization)](#docker-implementation-containerization)
+  - [Cloud Infrastructure Deployment](#cloud-infrastructure-deployment)
+  - [Bonus: Podcast](#bonus-podcast)
 
 
 # Student Dropout and Academic Success Prediction
@@ -24,7 +25,7 @@ A Flask-based REST API that predicts student dropout probability and academic pe
 ![Banner](images/Student_Dropout_Success_Prediction_Banner.jpg)
 
 
-## Problem Description
+## System Overview
 
 Student dropout and academic underperformance are significant challenges in higher education institutions, impacting both the students' futures and institutional effectiveness. Early identification of at-risk students is crucial for implementing timely interventions and support systems.
 
@@ -36,7 +37,7 @@ The solution provides a **REST API interface** that allows educational instituti
 
 The model considers multiple factors including enrollment data, academic performance, socio-economic indicators, and previous educational background to provide comprehensive insights into student success patterns.
 
-## Project overview
+## Technical Architecture
 
 #### What Does the Student Success Predictor Do?
 
@@ -77,7 +78,7 @@ input: {'curricular_units_2nd_sem_(approved)': [8], 'curricular_units_2nd_sem_(g
 --------------------------------------------------
 ```
 
-## Dataset
+## Data Specification
 
 The dataset was sourced from:
 1. [**UCI**](https://archive.ics.uci.edu/dataset/697/predict+students+dropout+and+academic+success)
@@ -115,7 +116,7 @@ You can find data in [**`data/dataset.csv`**](data/dataset.csv)
 | Curricular units 1st sem (approved) | The number of curricular units approved by the student in the first semester. (Numerical) |
 
 
-## Technologies
+## Technical Stack
 
 - **`Python 3.12`**
 - **`JupyterLab`** for experimentation
@@ -126,7 +127,7 @@ You can find data in [**`data/dataset.csv`**](data/dataset.csv)
 - **`Render`** for cloud deployment
 
 
-## Steps to run this application(reproduce)
+## Implementation guide (Reproduce)
 
 Simplest way to run this application:
 
@@ -134,10 +135,10 @@ Simplest way to run this application:
 ```
 git clone https://github.com/ranga4all1/student-dropout-and-success-prediction
 ```
-2. Follow steps in **`Containerization`** section to build and test.
+2. Follow steps in [**`Docker Implementation (Containerization)`**](#docker-implementation-containerization) section to build and test.
 
 
-## Project structure
+## Repository Structure
 
 ```
 .
@@ -159,7 +160,7 @@ git clone https://github.com/ranga4all1/student-dropout-and-success-prediction
 └── train.py
 ```
 
-## Setup
+## Development Environment Configuration
 
 1. GitHub:
     - Create repo:`student-dropout-and-success-prediction`
@@ -194,7 +195,7 @@ pipenv run jupyter-lab
 **Note**: Make sure to select mapped kernel in jupyter-lab before executing notebooks.
 
 
-## Experimentation
+## Model Development and Analysis
 
 For experiments, we use Jupyter notebooks. They are in the [**`notebooks`**](notebooks/) folder.
 
@@ -240,7 +241,7 @@ We have the following notebooks:
         - Pickle model and scaler in a single file
         - Load and test saved model
 
-## Code
+## Source Code
 
 After experimentation, application scripts were developed. We have below code files:
 
@@ -252,7 +253,7 @@ After experimentation, application scripts were developed. We have below code fi
 - [**`Dockerfile`**](Dockerfile) - Docker configuration for containerizing the prediction service
 
 
-## Train and test locally
+## Model Training and Local Testing
 
 1. Train and save model
 
@@ -302,7 +303,7 @@ input: {'curricular_units_2nd_sem_(approved)': [8], 'curricular_units_2nd_sem_(g
 Student 1: Prediction = Graduate, Probabilities = [0.02719054 0.09465016 0.8781593 ]
 ```
 
-## Running flask app and test
+## API Service Implementation
 
 ```
 pipenv run python predict.py
@@ -320,7 +321,7 @@ input: {'curricular_units_2nd_sem_(approved)': [8], 'curricular_units_2nd_sem_(g
 {'predictions by model': [{'predicted_status': 'Graduate', 'probabilities': {'Dropout': 0.027190541365371718, 'Enrolled': 0.09465016268419602, 'Graduate': 0.8781592959504326}, 'student_id': 1}]}
 ```
 
-## Running flask app via gunicorn
+## Production Deployment with Gunicorn
 ```
 pipenv shell
 gunicorn --bind 0.0.0.0:9696 predict:app
@@ -338,7 +339,7 @@ pipenv run python predict-requests-test.py
 Result: Same as previous step
 
 
-## Containerization
+## Docker Implementation (Containerization)
 
 1. Build and run docker image (for system dependency management)
 
@@ -346,7 +347,7 @@ Result: Same as previous step
 docker build -t <your_dockerhub_username>/student-dropout-success .
 docker images
 ```
-**Note**: We are adding `<your_dockerhub_username>` in the name to push image to docker HUB later. Refer to [Cloud deployment](#cloud-deployment) section for more details.
+**Note**: We are adding `<your_dockerhub_username>` in the name to push image to docker HUB later. Refer to [Cloud Infrastructure Deployment](#cloud-infrastructure-deployment) section for more details.
 
 2. Run the container with proper signal handling
 ```
@@ -370,7 +371,7 @@ python predict-requests-test.py
 Result: Same as previous step
 
 
-## Cloud deployment
+## Cloud Infrastructure Deployment
 
 We will be deploying to Render cloud.
 
@@ -379,13 +380,13 @@ We will be deploying to Render cloud.
 1. Go to [**`Docker Hub`**](https://hub.docker.com) and sign in by creating account.
 2. Select Create repository.
 3. On the Create repository page, enter the following information:
-- Repository name - `student-dropout-success`
-- Short description - Flask based REST API service for student-dropout-success-prediction
-- Visibility - select `Public` to allow others to pull your app
+  - Repository name - `student-dropout-success`
+  - Short description - Flask based REST API service for student-dropout-success-prediction
+  - Visibility - select `Public` to allow others to pull your app
 4. Select Create to create the repository.
 5. Go to your docker hub account settings -> Personal access tokens and create access token:
-- description: my-access-token
-- permissions: Read & Write
+  - description: my-access-token
+  - permissions: Read & Write
 
 #### Push docker image to docker hub
 
@@ -400,8 +401,8 @@ docker push <your_dockerhub_username>/student-dropout-success:latest
 - Source Code: Existing Image
 - Image URL: `<your_dockerhub_username>/student-dropout-success`
 - Name: `student-dropout-and-success-prediction`
-- Region: <your-nearest-region>
-- Instance type: Free
+- Region: `<your-nearest-region>`
+- Instance type: `Free`
 2. Click -> Deploy web service. Wait till service starts successfully.
 3. Note down your web service URL
 
@@ -430,7 +431,20 @@ input: {'curricular_units_2nd_sem_(approved)': [8], 'curricular_units_2nd_sem_(g
 Once tested, remove web service to avoid charges, if any.
 
 1. In the [**`Render Dashboard`**](https://dashboard.render.com/), Click -> Dashboard
-2. Click the `three-dot` button next to your web service that was deployed earlier
+2. Click the `[...]` (three-dot) button next to your web service that was deployed earlier
 3. Click `Settings`
 4. Click `Delete Web Service` at the **end** of the page
 5. Copy the delete command and validate to remove service
+
+
+## Bonus: Podcast
+
+Join us for an insightful discussion on predicting student success using machine learning. Our podcast explores how data-driven approaches can revolutionize student retention strategies in higher education. Listen as we break down the technical implementation of our Random Forest model and its real-world impact on helping institutions identify at-risk students early.
+
+[Spotify podcast](https://open.spotify.com/show/6MOWOQgC3e4UJHuQP5J4Wf)
+
+*This podcast was auto-generated using [NotebookLM](https://notebooklm.google/)*
+
+
+
+
